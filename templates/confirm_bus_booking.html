@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<div class="container py-5">
+  <div class="col-lg-6 mx-auto">
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-body p-5">
+        <h4 class="mb-4 text-primary fw-bold">
+          <i class="fas fa-bus me-2"></i>Confirm Your Bus Booking
+        </h4>
+
+        <!-- Bus Details -->
+        <div class="bg-light rounded p-4 mb-4 border">
+          <h5 class="fw-semibold">{{ bus.operator }}</h5>
+          <p class="mb-1 text-muted">{{ bus.origin }} → {{ bus.destination }}</p>
+          <p class="mb-1 small text-secondary">
+            <i class="far fa-clock me-1"></i> Departure: {{ bus.departure_time }}
+          </p>
+          <p class="mb-1 small text-secondary">
+            <i class="far fa-clock me-1"></i> Arrival: {{ bus.arrival_time }}
+          </p>
+          <p class="mb-1 small text-secondary">
+            <i class="fas fa-bus me-1"></i> Bus Number: {{ bus.bus_number }}
+          </p>
+          <p class="mb-0 text-success fw-semibold">
+            <i class="fas fa-rupee-sign me-1"></i>{{ bus.price }}
+          </p>
+        </div>
+
+        <!-- Booking Form -->
+        <form method="POST">
+          <div class="bg-white rounded p-4 border mb-4">
+            <h6 class="mb-3 fw-bold">Select Your Seat</h6>
+            <div id="seat-container" class="bus-seat-grid" data-max-seats="{{ passengers }}">
+              <div id="seat-warning" class="text-danger mt-2" style="display: none;"></div>
+              {% for row in range(1, 7) %}
+                <div class="bus-seat-row">
+                  {% for col in ['A', 'B', 'C', 'D'] %}
+                    {% if col == 'C' %}
+                      <div class="bus-aisle"></div>
+                    {% endif %}
+                    {% set seat_label = row ~ col %}
+                    <label class="bus-seat {{ 'booked' if bus.seats.get(seat_label, '').lower() == 'booked' else 'available' }}">
+                      <input type="checkbox" name="seats" value="{{ seat_label }}"
+                             {% if bus.seats.get(seat_label, '').lower() == 'booked' %}disabled{% endif %}>
+                      <span class="seat-label">{{ seat_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Passenger Info Fields -->
+          <div id="passenger-details" style="display: none;">
+            <h6 class="mt-4">Passenger Details</h6>
+            <div id="passenger-fields" class="mb-3"></div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="d-flex gap-3 justify-content-end">
+            <button type="submit" name="action" value="confirm" class="btn btn-success px-4">
+              <i class="fas fa-check me-2"></i>Confirm
+            </button>
+            <button type="submit" name="action" value="cancel" class="btn btn-outline-danger px-4">
+              <i class="fas fa-times me-2"></i>Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bus Seat Logic -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('#seat-container');
+    const passengerFields = document.getElementById('passenger-fields');
+
+    if (!container || !passengerFields) return;
+
+    const maxSeats = parseInt(container.dataset.maxSeats || 1);
+    const checkboxes = container.querySelectorAll('input[name="seats"]');
+    const warningDiv = document.querySelector('#seat-warning');
+    const passengerDetailsSection = document.getElementById('passenger-details');
+
+    function showWarning(msg) {
+      if (warningDiv) {
+        warningDiv.textContent = msg;
+        warningDiv.style.display = 'block';
+      } else {
+        alert(msg);
+      }
+    }
+
+    function clearWarning() {
+      if (warningDiv) {
+        warningDiv.textContent = '';
+        warningDiv.style.display = 'none';
+      }
+    }
+
+    function updateUI() {
+      const selected = Array.from(checkboxes).filter(c => c.checked);
+
+      if (passengerDetailsSection && passengerFields) {
+        if (selected.length > 0) {
+          passengerDetailsSection.style.display = 'block';
+          passengerFields.innerHTML = '';
+          selected.forEach((cb, i) => {
+            const seat = cb.value;
+            const div = document.createElement('div');
+            div.className = 'mb-3';
+            div.innerHTML = `
+              <label class="form-label fw-semibold">Passenger ${i + 1} (Seat ${seat})</label>
+              <input type="text" name="passenger_names[]" required class="form-control" placeholder="Full name">
+            `;
+            passengerFields.appendChild(div);
+          });
+        } else {
+          passengerDetailsSection.style.display = 'none';
+          passengerFields.innerHTML = '';
+        }
+      }
+
+      checkboxes.forEach(c => {
+        const label = c.closest('label');
+        if (!label || label.classList.contains('booked')) return;
+        label.classList.toggle('selected', c.checked);
+      });
+    }
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', function () {
+        const selected = Array.from(checkboxes).filter(c => c.checked);
+        if (selected.length > maxSeats) {
+          this.checked = false;
+          showWarning(`You can only select up to ${maxSeats} seat(s).`);
+          return;
+        }
+        clearWarning();
+        updateUI();
+      });
+    });
+
+    updateUI();
+  });
+</script>
+
+<!-- Bus Seat Styles -->
+<style>
+  .bus-seat-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .bus-seat-row {
+    display: grid;
+    grid-template-columns: 60px 60px 30px 60px 60px; /* A-B aisle C-D */
+    gap: 10px;
+    align-items: center;
+  }
+
+  .bus-aisle {
+    width: 30px;
+  }
+
+  .bus-seat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    box-sizing: border-box;
+    transition: transform 0.2s;
+  }
+
+  .bus-seat input {
+    display: none;
+  }
+
+  .bus-seat.available {
+    background-color: #28a745;
+  }
+
+  .bus-seat.booked {
+    background-color: #999;
+    cursor: not-allowed;
+    color: #eee;
+  }
+
+  .bus-seat:hover:not(.booked) {
+    transform: scale(1.05);
+  }
+
+  .bus-seat.selected {
+    background-color: #ffc107 !important;
+    color: #000;
+    outline: 3px solid #ffc107;
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.7);
+  }
+
+  .seat-label {
+    pointer-events: none;
+  }
+</style>
+{% endblock %}

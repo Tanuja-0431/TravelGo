@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<div class="container py-5">
+  <div class="col-lg-6 mx-auto">
+    <div class="card border-0 shadow-sm rounded-4 exhibition-card">
+      <div class="card-body p-5">
+        <h4 class="mb-4 text-primary fw-bold">
+          <i class="fas fa-ticket-alt me-2"></i>Confirm Your Booking
+        </h4>
+
+        <!-- Flight details -->
+        <div class="bg-light rounded p-4 mb-4 border">
+          <h5 class="fw-semibold">{{ flight.flight_number }}</h5>
+          <p class="mb-1 text-muted">{{ flight.origin }} → {{ flight.destination }}</p>
+          <p class="mb-1 small text-secondary">
+            <i class="far fa-clock me-1"></i> Departure: {{ flight.departure_time }}
+          </p>
+          <p class="mb-1 small text-secondary">
+            <i class="far fa-clock me-1"></i> Arrival: {{ flight.arrival_time }}
+          </p>
+          <p class="mb-0 text-success fw-semibold">
+            <i class="fas fa-rupee-sign me-1"></i>{{ flight.price }}
+          </p>
+        </div>
+
+<form method="POST">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      {% if category == 'booking' %}
+        <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  {% if flight and flight.seats %}
+    <div id="seat-container" data-max-seats="{{ passengers }}" data-price="{{ flight['price'] | float }}">
+      <div class="seat-grid">
+        {% for seat, status in flight.seats.items() %}
+          <label class="seat {{ 'booked' if status == 'booked' else 'available' }}">
+            <input type="checkbox" name="seats" value="{{ seat }}" class="seat-checkbox" {% if status == 'booked' %}disabled{% endif %}>
+            <span class="seat-label">{{ seat }}</span>
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">
+      Seat information is not available for this flight.
+    </div>
+  {% endif %}
+
+  <div id="seat-warning" class="text-danger mt-2" style="display: none;"></div>
+
+  <!-- Passenger Details -->
+  <div id="passenger-details" style="display: none;">
+    <h6 class="mt-4">Passenger Details</h6>
+    <div id="passenger-fields" class="mb-3"></div>
+  </div>
+
+  <!-- Confirm / Cancel Buttons -->
+  <div class="d-flex gap-3 justify-content-end mt-4">
+    <button type="submit" name="action" value="confirm" class="btn btn-success px-4">
+      <i class="fas fa-check me-2"></i>Confirm
+    </button>
+    <button type="submit" name="action" value="cancel" class="btn btn-outline-danger px-4">
+      <i class="fas fa-times me-2"></i>Cancel
+    </button>
+  </div>
+</form>
+
+<!-- Embedded JS -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('#seat-container');
+    const passengerFields = document.getElementById('passenger-fields');
+
+    if (!container || !passengerFields) return;
+
+    const maxSeats = parseInt(container.dataset.maxSeats || 1);
+    const checkboxes = container.querySelectorAll('input[name="seats"]');
+    const warningDiv = document.querySelector('#seat-warning');
+    const passengerDetailsSection = document.getElementById('passenger-details');
+
+    function showWarning(msg) {
+      if (warningDiv) {
+        warningDiv.textContent = msg;
+        warningDiv.style.display = 'block';
+      } else {
+        alert(msg);
+      }
+    }
+
+    function clearWarning() {
+      if (warningDiv) {
+        warningDiv.textContent = '';
+        warningDiv.style.display = 'none';
+      }
+    }
+
+    function updateUI() {
+      const selected = Array.from(checkboxes).filter(c => c.checked);
+
+      if (passengerDetailsSection && passengerFields) {
+        if (selected.length > 0) {
+          passengerDetailsSection.style.display = 'block';
+          passengerFields.innerHTML = '';
+          selected.forEach((cb, i) => {
+            const seat = cb.value;
+            const div = document.createElement('div');
+            div.className = 'mb-3';
+            div.innerHTML = `
+              <label class="form-label fw-semibold">Passenger ${i + 1} (Seat ${seat})</label>
+              <input type="text" name="passenger_names[]" required class="form-control" placeholder="Full name">
+            `;
+            passengerFields.appendChild(div);
+          });
+        } else {
+          passengerDetailsSection.style.display = 'none';
+          passengerFields.innerHTML = '';
+        }
+      }
+
+      checkboxes.forEach(c => {
+        const label = c.closest('label');
+        if (!label || label.classList.contains('booked')) return;
+        label.classList.toggle('selected', c.checked);
+      });
+    }
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', function () {
+        const selected = Array.from(checkboxes).filter(c => c.checked);
+        if (selected.length > maxSeats) {
+          this.checked = false;
+          showWarning(`You can only select up to ${maxSeats} seat(s).`);
+          return;
+        }
+        clearWarning();
+        updateUI();
+      });
+    });
+
+    updateUI();
+  });
+</script>
+
+<!-- Seat Grid Styles -->
+<style>
+  .seat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 80px);
+    gap: 10px;
+  }
+
+  .seat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-sizing: border-box;
+    color: #fff;
+  }
+
+  .seat input {
+    margin-bottom: 4px;
+    display: none;
+  }
+
+  .seat.available {
+    background-color: #28a745;
+  }
+
+  .seat.booked {
+    background-color: #999;
+    cursor: not-allowed;
+    color: #eee;
+  }
+
+  .seat:hover:not(.booked) {
+    transform: scale(1.05);
+  }
+
+  .seat.selected {
+    background-color: #ffc107 !important;
+    color: #000;
+    outline: 3px solid #ffc107;
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.7);
+  }
+
+  .seat-label {
+    font-weight: bold;
+    pointer-events: none;
+  }
+</style>
+
+{% endblock %}

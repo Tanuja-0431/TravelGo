@@ -1,0 +1,74 @@
+<div class="container py-5 mt-3">
+  <!-- Search Flights -->
+  <div class="bg-light shadow-sm rounded-4 p-4 mb-5 border">
+    <h4 class="mb-4 text-primary fw-bold">
+      <i class="fas fa-plane-departure me-2"></i>Search Flights
+    </h4>
+    <form method="POST" action="{{ url_for('booking') }}" class="row g-3">
+      <input type="hidden" name="form_type" value="flight">
+      <div class="col-md-4">
+        <label for="origin" class="form-label">From</label>
+        <input type="text" id="origin" name="origin" class="form-control" placeholder="e.g. Delhi" required>
+      </div>
+      <div class="col-md-4">
+        <label for="destination" class="form-label">To</label>
+        <input type="text" id="destination" name="destination" class="form-control" placeholder="e.g. Mumbai" required>
+      </div>
+      <div class="col-md-4">
+        <label for="date" class="form-label">Departure Date</label>
+        <input type="date" id="date" name="date" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label for="passengers">Passengers:</label>
+<input type="number" name="passengers" min="1" max="10" value="1" required>
+<input type="hidden" name="form_type" value="flight">
+      </div>
+      <!-- Passenger Details Fields -->
+<div id="passenger-details" style="display: none;">
+  <h6 class="mt-4">Passenger Details</h6>
+  <div id="passenger-fields" class="mb-3"></div>
+</div>
+
+<!-- Total Price Box -->
+<div id="total-price" class="alert alert-info fw-semibold" style="display: none;"></div>
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary px-5">
+          <i class="fas fa-search me-2"></i>Search
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Flight Results -->
+  {% if flights %}
+    <h5 class="text-secondary fw-semibold mb-4">
+      <i class="fas fa-list-ul me-2"></i>Available Flights
+    </h5>
+    <div class="d-flex flex-column gap-4">
+      {% for flight in flights %}
+        <div class="card border shadow-sm">
+          <div class="card-body bg-white d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+              <h6 class="fw-bold mb-1">{{ flight['flight_number'] }}</h6>
+              <p class="mb-1 text-muted">{{ flight['origin'] }} → {{ flight['destination'] }}</p>
+              <p class="mb-1 small text-secondary">
+                <i class="far fa-clock me-1"></i>{{ flight['departure_time'] }} - {{ flight['arrival_time'] }}
+              </p>
+              <p class="mb-0 small text-success">
+                <i class="fas fa-rupee-sign me-1"></i>{{ flight['price'] }}
+              </p>
+            </div>
+            <div>
+              <a href="{{ url_for('confirm_booking', flight_id=flight.id) }}" class="btn btn-primary">Book</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% elif flights is defined %}
+    <div class="text-center text-muted mt-5">
+      <i class="fas fa-plane-slash fa-2x mb-3"></i>
+      <p>No flights match your search. Try different cities or dates.</p>
+    </div>
+  {% endif %}
+</div>

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% block content %}
+<div class="container mt-5">
+  <h3>Select a Seat for {{ flight.flight_number }}</h3>
+  <form method="POST">
+    <div class="seat-grid">
+      {% for seat, status in flight.seats.items() %}
+        <label class="seat {{ 'booked' if status == 'booked' else '' }}">
+          <input type="checkbox" name="seats" value="{{ seat }}">{% if status == 'booked' %}disabled{% endif %}>
+          {{ seat }}
+        </label>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Confirm Seat</button>
+  </form>
+</div>
+
+<style>
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 80px);
+  gap: 10px;
+}
+.seat {
+  display: block;
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+  cursor: pointer;
+}
+.seat.booked {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+</style>
+{% endblock %}

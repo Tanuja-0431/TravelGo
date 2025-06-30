@@ -1,0 +1,100 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-image: url("../images/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  margin: 0;
+  color: #F7FFF7; /* Lightest white in theme */
+}
+
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 51, 102, 0.45); /* Deep ocean overlay */
+  z-index: -1;
+}
+
+.exhibition-container {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 30px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 600;
+  color: #E0FBFC;
+}
+
+.search-bar {
+  max-width: 400px;
+  margin: 0 auto 40px auto;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(12px);
+  color: #F7FFF7;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #A8DADC;
+}
+
+.btn-primary {
+  background-color: #2C7DA0; /* Ocean Blue */
+  border: none;
+  font-weight: 500;
+  color: #F7FFF7;
+}
+
+.btn-primary:hover {
+  background-color: #1D3557; /* Deep Navy */
+}
+
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 999;
+}
+
+.back-btn a {
+  color: #F7FFF7;
+  text-decoration: none;
+  font-weight: 500;
+  background-color: rgba(44, 125, 160, 0.3); /* Light ocean */
+  padding: 8px 15px;
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+.back-btn a:hover {
+  background-color: rgba(44, 125, 160, 0.6);
+}
+
+ 

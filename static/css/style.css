@@ -1,0 +1,102 @@
+body { font-family: Arial, sans-serif; margin: 20px; }
+h1,h2,h3{color:#333;}
+.error {color:red;}
+nav a { margin-right: 10px; }
+button {cursor: pointer;}
+.exhibit { border: 1px solid #ddd; padding: 10px; display: inline-block; margin: 10px; }
+.exhibition-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+}
+
+.exhibition-card:hover {
+  transform: scale(1.02);
+}
+/* Confirm Booking Card Styles */
+.confirm-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1rem;
+  background: #e6fcff;
+  min-height: 80vh;
+}
+
+.confirm-card {
+  background-color: #444;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+}
+
+.confirm-card h4 {
+  color: #ffc107;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.confirm-card .details-box {
+  background: #fff;
+  color: #333;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.confirm-card .details-box h5 {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.confirm-card .details-box p {
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+}
+
+.confirm-card .details-box .price {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.confirm-card form {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.confirm-card button {
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.confirm-card .btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.confirm-card .btn-success:hover {
+  background: #218838;
+}
+
+.confirm-card .btn-outline-danger {
+  background: transparent;
+  color: #dc3545;
+  border: 2px solid #dc3545;
+}
+
+.confirm-card .btn-outline-danger:hover {
+  background: #dc3545;
+  color: white;
+}

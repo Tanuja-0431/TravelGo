@@ -1,0 +1,64 @@
+
+{% block content %}
+<div class="container py-5">
+  <div class="bg-light shadow-sm rounded-4 p-4 border mb-5">
+    <h4 class="mb-3 text-primary fw-bold"><i class="fas fa-bus me-2"></i>Search Buses</h4>
+    <form method="POST" action="{{ url_for('booking') }}" class="row g-3">
+        <input type="hidden" name="active_tab" value="buses">
+      <input type="hidden" name="form_type" value="bus">
+      <div class="col-md-4">
+        <label for="origin" class="form-label">From</label>
+        <input type="text" id="origin" name="origin" class="form-control" placeholder="e.g. Pune" required>
+      </div>
+      <div class="col-md-4">
+        <label for="destination" class="form-label">To</label>
+        <input type="text" id="destination" name="destination" class="form-control" placeholder="e.g. Mumbai" required>
+      </div>
+      <div class="col-md-4">
+        <label for="date" class="form-label">Departure Date</label>
+        <input type="date" id="date" name="date" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+  <label for="passengers" class="form-label">Number of Passengers</label>
+  <input type="number" id="passengers" name="passengers" class="form-control" min="1" max="10" value="1" required>
+</div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary px-5">
+          <i class="fas fa-search me-2"></i>Search
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+  {% if buses is not none %}
+    {% if buses %}
+      <div class="row g-4">
+        {% for bus in buses %}
+        <div class="col-md-6 col-lg-4">
+          <div class="bg-white border rounded-4 shadow-sm p-4 hover-card h-100 d-flex flex-column justify-content-between">
+            <div>
+              <h5 class="fw-bold mb-2">{{ bus.bus_number }}</h5>
+              <p class="mb-1 text-muted"><strong>{{ bus.origin }}</strong> → <strong>{{ bus.destination }}</strong></p>
+              <p class="small text-secondary mb-1">🕒 Departs: {{ bus.departure_time }}</p>
+              <p class="small text-secondary mb-1">🕓 Arrives: {{ bus.arrival_time }}</p>
+              <p class="small text-info mb-1">🛏 Type: {{ bus.bus_type }}</p>
+              <p>🎫 Seats Available: {{ bus.seats.values() | select('equalto', 'available') | list | length }}</p>
+              <p class="text-success fw-semibold">💸 ₹{{ bus.price }}</p>
+            </div>
+            <a href="{{ url_for('confirm_bus_booking', bus_id=bus.id) }}" class="btn btn-primary w-100 mt-3">
+              Book Now
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-warning">No buses found for those locations.</div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}
+

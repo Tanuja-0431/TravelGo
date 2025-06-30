@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}{{ place.name }} - TravelGo{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<div class="container my-5">
+  <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary mb-4">
+    ← Back to Dashboard
+  </a>
+
+  <div class="card shadow-lg p-4 bg-light border-0 rounded-4">
+    <div class="row g-4 align-items-start">
+
+      <!-- Image -->
+      <div class="col-md-6">
+        <img src="{{ place.image }}" class="img-fluid rounded shadow" alt="{{ place.name }}">
+      </div>
+
+      <!-- Info -->
+      <div class="col-md-6">
+        <h2 class="fw-bold">{{ place.name }}</h2>
+        <p class="text-muted mb-1">
+          <i class="bi bi-geo-alt-fill me-1"></i>
+          {{ place.location or "Unknown Location" }}
+        </p>
+        <span class="badge bg-primary mb-3">{{ place.category | capitalize }}</span>
+
+        <p class="lead mt-3">{{ place.description or "No description available." }}</p>
+
+        <ul class="list-group list-group-flush mt-4">
+          <li class="list-group-item bg-transparent border-0">
+            <i class="bi bi-calendar-heart me-2 text-primary"></i>
+            <strong>Best Season:</strong> {{ place.best_season or "All year" }}
+          </li>
+          <li class="list-group-item bg-transparent border-0">
+            <i class="bi bi-clock-history me-2 text-primary"></i>
+            <strong>Recommended Duration:</strong> {{ place.duration or "Not specified" }}
+          </li>
+          <li class="list-group-item bg-transparent border-0">
+            <i class="bi bi-stars me-2 text-primary"></i>
+            <strong>Highlights:</strong> {{ place.highlights or "Scenic views, culture, etc." }}
+          </li>
+          <li class="list-group-item bg-transparent border-0">
+            <i class="bi bi-tags me-2 text-primary"></i>
+            <strong>Tags:</strong>
+            {{ place.tags | join(', ') if place.tags else "No tags available" }}
+          </li>
+          <li class="list-group-item bg-transparent border-0">
+            <i class="bi bi-lightbulb me-2 text-primary"></i>
+            <strong>Travel Tips:</strong> {{ place.tips or "Bring comfortable shoes and a camera!" }}
+          </li>
+        </ul>
+
+        <div class="mt-4 d-flex flex-wrap gap-3">
+          <a href="{{ url_for('plan_trip', place_id=place._id) }}" class="btn btn-primary px-4 py-2">
+  <i class="bi bi-calendar2-plus me-1"></i> Plan Trip
+</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- You might also like -->
+  <div class="mt-5">
+    <h4 class="mb-3">You Might Also Like</h4>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Placeholder - in future, replace with loop over similar places -->
+      <div class="col">
+        <div class="card h-100">
+          <img src="/static/images/tokyo.jpg" class="card-img-top" alt="Similar Destination">
+          <div class="card-body">
+            <h5 class="card-title">Sample Destination</h5>
+            <p class="card-text text-muted">Tokyo, Japan</p>
+          </div>
+        </div>
+      </div>
+      <!-- Add more cards or use a loop here -->
+    </div>
+  </div>
+</div>
+
+{% endblock %}

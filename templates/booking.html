@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block title %}Book Your Trip | TravelGo{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" media="print" onload="this.media='all'">
+  <style>
+    body {
+      background: linear-gradient(to right, #a8edea, #fed6e3);
+    }
+
+    .booking-header {
+      background: linear-gradient(to right, #1D3557, #457B9D);
+      color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .nav-tabs .nav-link {
+      color: #1D3557;
+      font-weight: 600;
+      border: none;
+      padding: 0.75rem 1.5rem;
+    }
+
+    .nav-tabs .nav-link.active {
+      background-color: #1D3557;
+      color: white;
+      border-radius: 6px;
+    }
+
+    .card-container {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-bottom: 1rem;
+    }
+
+    .card-container h4 {
+      color: #1D3557;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+    }
+    .card img {
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+}
+
+.card-title {
+  color: #1D3557;
+  font-weight: 600;
+  text-align: center;
+}
+.card-container form {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+.tab-pane {
+  padding-bottom: 1rem;
+}
+
+.tab-pane:not(.active) {
+  display: none !important;
+}
+
+.card-container:last-of-type {
+  margin-bottom: 0;
+}
+
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="booking-header text-center mb-4">
+    <h2>Plan Your Next Trip</h2>
+    <p class="mb-0">Book flights, buses, trains, and hotels — all in one place.</p>
+  </div>
+
+  <ul class="nav nav-tabs justify-content-center mb-3" id="bookingTabs" role="tablist">
+    <li class="nav-item">
+       <button class="nav-link {% if active_tab == 'flights' %}active{% endif %}" id="flights-tab" data-bs-toggle="tab" data-bs-target="#flights" role="tab">✈️ Flights</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link {% if active_tab == 'buses' %}active{% endif %}" id="buses-tab" data-bs-toggle="tab" data-bs-target="#buses" role="tab">🚌 Buses</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link {% if active_tab == 'trains' %}active{% endif %}" id="trains-tab" data-bs-toggle="tab" data-bs-target="#trains" role="tab">🚆 Trains</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link {% if active_tab == 'hotels' %}active{% endif %}" id="hotels-tab" data-bs-toggle="tab" data-bs-target="#hotels" role="tab">🏨 Hotels</button>
+    </li>
+  </ul>
+
+  <div class="tab-content"id="bookingTabContent">
+    <div class="tab-pane fade {% if active_tab == 'flights' %}show active{% endif %}" id="flights" role="tabpanel">
+      <div class="card-container mb-4">{% include 'flights.html' %}</div>
+    </div>
+    <div class="tab-pane  fade {% if active_tab == 'buses' %}show active{% endif %}" id="buses" role="tabpanel">
+      <div class="card-container mb-4">{% include 'buses.html' %}</div>
+    </div>
+    <div class="tab-pane fade {% if active_tab == 'trains' %}show active{% endif %}" id="trains" role="tabpanel">
+      <div class="card-container mb-4">{% include 'trains.html' %}</div>
+    </div>
+    <div class="tab-pane fade {% if active_tab == 'hotels' %}show active{% endif %}" id="hotels" role="tabpanel">
+      <div class="card-container mb-4">{% include 'hotels.html' %}</div>
+    </div>
+  </div>
+
+  <div class="card-container offers-card mt-0 pt-0">
+    <h5>🔥 Today's Deals & Offers</h5>
+    <p>Get up to 30% off on select hotels and flights! Use code <strong>TRAVELGO30</strong> at checkout.</p>
+  </div>
+
+  <div class="explore-section mt-5">
+  <h4 class="text-center mb-4">🌍 Explore the World</h4>
+  <div class="scroll-container d-flex flex-nowrap overflow-auto px-3">
+    {% for place in [
+      {'name': 'Paris, France', 'image': 'paris.jpg'},
+      {'name': 'Kyoto, Japan', 'image': 'kyoto.jpg'},
+      {'name': 'Santorini, Greece', 'image': 'santorini.jpg'},
+      {'name': 'New York, USA', 'image': 'New York.jpg'},
+      {'name': 'Cairo, Egypt', 'image': 'Cairo.jpg'},
+      {'name': 'Sydney, Australia', 'image': 'sydney.jpg'},
+      {'name': 'Cape Town, South Africa', 'image': 'Cape Town.jpg'},
+      {'name': 'Rio de Janeiro, Brazil', 'image': 'rio.jpg'}
+    ] %}
+      <div class="card me-3" style="min-width: 220px;">
+        <img src="{{ url_for('static', filename='images/' ~ place.image) }}" loading="lazy" class="card-img-top" alt="{{ place.name }}">
+        <div class="card-body">
+          <h5 class="card-title text-center">{{ place.name }}</h5>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="top-destinations mt-5 px-3">
+  <h4 class="text-center mb-4">🏆 Top Destinations</h4>
+  <div class="row g-4 justify-content-center">
+    {% for dest in [
+      {'name': 'Bali, Indonesia', 'image': 'bali.jpg', 'tag': 'Tropical Paradise'},
+      {'name': 'Venice, Italy', 'image': 'venice.jpg', 'tag': 'Romantic Getaway'},
+      {'name': 'Dubai, UAE', 'image': 'dubai.jpg', 'tag': 'Luxury'},
+      {'name': 'Iceland', 'image': 'iceland.jpg', 'tag': 'Nature Escape'},
+      {'name': 'Barcelona, Spain', 'image': 'cultural.jpg', 'tag': 'Art & Culture'},
+      {'name': 'Singapore', 'image': 'singapore.jpg', 'tag': 'Urban Wonder'}
+    ] %}
+      <div class="col-md-4 col-sm-6">
+        <div class="destination-card position-relative shadow-sm rounded-4 overflow-hidden">
+          <img src="{{ url_for('static', filename='images/' ~ dest.image) }}" loading="lazy" class="w-100 h-100 object-fit-cover" alt="{{ dest.name }}">
+          <div class="destination-overlay position-absolute bottom-0 start-0 w-100 p-3 text-white">
+            <h5 class="mb-0">{{ dest.name }}</h5>
+            <small class="text-light">{{ dest.tag }}</small>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="special-deals-section mt-5 px-3">
+  <h4 class="text-center mb-4">🎉 Special Deals for the Weekend</h4>
+  <div class="row g-4 justify-content-center">
+    {% for deal in [
+      {'title': 'Romantic Paris Getaway', 'desc': 'Enjoy 30% off for couples this weekend', 'image': 'Rome.jpg'},
+      {'title': 'Family Fun in Orlando', 'desc': 'Save big on family packages this month!', 'image': 'orlando.jpg'},
+      {'title': 'Tokyo Summer Sale', 'desc': 'Flash deal for 3 nights & 4 days — limited time!', 'image': 'tokyo.jpg'},
+      {'title': 'Bali Anniversary Retreat', 'desc': 'Celebrate love with luxury spa discounts', 'image': 'bali.jpg'}
+    ] %}
+      <div class="col-md-5 col-lg-4">
+        <div class="deal-card shadow-sm rounded-4 overflow-hidden">
+          <img src="{{ url_for('static', filename='images/' ~ deal.image) }}" loading="lazy" class="w-100" alt="{{ deal.title }}">
+          <div class="p-3 bg-light">
+            <h6 class="fw-bold">{{ deal.title }}</h6>
+            <p class="text-muted mb-0">{{ deal.desc }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+
+{% endblock %}
+

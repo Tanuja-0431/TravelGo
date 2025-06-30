@@ -1,0 +1,71 @@
+<div class="container py-5">
+  <!-- Search Trains -->
+  <div class="bg-light shadow-sm rounded-4 p-4 mb-5 border">
+    <h4 class="mb-4 text-primary fw-bold">
+      <i class="fas fa-train me-2"></i>Search Trains
+    </h4>
+    <form method="POST" action="{{ url_for('booking') }}" class="row g-3">
+      <input type="hidden" name="form_type" value="train">
+      <input type="hidden" name="active_tab" value="trains">
+
+      <div class="col-md-4">
+        <label for="origin" class="form-label">From</label>
+        <input type="text" id="origin" name="origin" class="form-control" placeholder="e.g. Delhi" required>
+      </div>
+      <div class="col-md-4">
+        <label for="destination" class="form-label">To</label>
+        <input type="text" id="destination" name="destination" class="form-control" placeholder="e.g. Mumbai" required>
+      </div>
+      <div class="col-md-4">
+        <label for="date" class="form-label">Departure Date</label>
+        <input type="date" id="date" name="date" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+  <label for="passengers" class="form-label">Passengers</label>
+  <input type="number" id="passengers" name="passengers" class="form-control" min="1" value="1" required>
+</div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary px-5">
+          <i class="fas fa-search me-2"></i>Search
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Train Results -->
+  {% if trains %}
+    <h5 class="text-secondary fw-semibold mb-4">
+      <i class="fas fa-list-ul me-2"></i>Available Trains
+    </h5>
+    <div class="d-flex flex-column gap-4">
+      {% for train in trains %}
+        <div class="card border shadow-sm">
+          <div class="card-body bg-white d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+              <h6 class="fw-bold mb-1">{{ train.train_number }}</h6>
+              <p class="mb-1 text-muted">{{ train.origin }} → {{ train.destination }}</p>
+              <p class="mb-1 small text-secondary">
+                <i class="far fa-clock me-1"></i>{{ train.departure_time }} - {{ train.arrival_time }}
+              </p>
+              <p class="mb-0 small text-success">
+                <i class="fas fa-rupee-sign me-1"></i>{{ train.price }}
+              </p>
+            </div>
+            <div>
+              <a href="{{ url_for('confirm_train_booking', train_id=train.id,  passengers=session.passengers) }}" class="btn btn-outline-success px-4">
+  Book Now
+</a>
+
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% elif trains is defined %}
+    <div class="text-center text-muted mt-5">
+      <i class="fas fa-train fa-2x mb-3"></i>
+      <p>No trains match your search. Try different cities or dates.</p>
+    </div>
+  {% endif %}
+</div>

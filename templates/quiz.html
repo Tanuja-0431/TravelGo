@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Travel Quiz - TravelGo{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<style>
+  body {
+    background-color: #e0f7fa;
+  }
+
+  .quiz-card {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .quiz-card h2 {
+    font-weight: bold;
+    color: #0077b6;
+  }
+
+  .form-control {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .btn-custom {
+    margin-top: 30px;
+    background-color: #0077b6;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-custom:hover {
+    background-color: #023e8a;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quiz-card">
+  {% if result_shown %}
+    {% if won %}
+      <h2 class="text-success">🎉 Congratulations!</h2>
+      <p>You answered all questions correctly and earned <strong>10% off</strong> your next booking!</p>
+    {% else %}
+      <h2 class="text-warning">Thanks for playing!</h2>
+      <p>Better luck next time!</p>
+    {% endif %}
+    <a href="{{ url_for('booking') }}" class="btn btn-custom">Back to Bookings</a>
+  {% else %}
+    <h2 class="mb-4">Travel Trivia</h2>
+    <form method="POST">
+      <p class="lead"><strong>Q: {{ question }}</strong></p>
+      <input type="text" name="answer" class="form-control mt-2" required>
+      <button type="submit" class="btn btn-custom mt-3">Submit Answer</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

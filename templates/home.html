@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home - TravelGo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #eff1f3;
+      padding-top: 80px;
+    }
+
+    .hero {
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80') no-repeat center center;
+      background-size: cover;
+      color: white;
+      height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: bold;
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+    }
+
+    .features {
+      padding: 60px 0;
+    }
+
+    .feature-box {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      padding: 30px;
+      text-align: center;
+    }
+
+    .feature-box img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .carousel-inner blockquote {
+      font-size: 1.1rem;
+      max-width: 600px;
+    }
+
+    .carousel-inner img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+    .nav-link:hover {
+      color: #0d6efd !important;
+    }
+    .navbar .nav-link {
+  transition: 0.3s ease-in-out;
+}
+
+.navbar .nav-link:hover {
+  color: #ffd369 !important;
+  text-decoration: underline;
+}
+    footer {
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TravelGo - Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top" style="background: linear-gradient(90deg, #1e3c72, #2a5298);">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-white" href="{{ url_for('home') }}">✈️ TravelGo</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto">
+        {% if session.email %}
+          <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('virtual_exhibition') }}">Exhibition</a></li>
+          <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('logout') }}">Logout</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('login') }}">Login</a></li>
+          <li class="nav-item"><a class="nav-link text-white fw-semibold" href="{{ url_for('register') }}">Register</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+  <!-- Hero Section -->
+  <div class="hero text-center mt-5 pt-5">
+    <h1>Explore the World with TravelGo</h1>
+    <p>Your personalized gateway to unforgettable travel experiences.</p>
+    {% if not session.email %}
+      <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg mt-3">Get Started</a>
+    {% else %}
+      <a href="{{ url_for('user_dashboard') }}" class="btn btn-success btn-lg mt-3">Go to Dashboard</a>
+    {% endif %}
+  </div>
+
+  <!-- Features Section -->
+  <section class="features container mt-5">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-box text-center p-3 border rounded shadow-sm h-100">
+          <img src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=800&q=80" class="img-fluid" alt="Top Destinations">
+          <h4 class="mt-3">Top Destinations</h4>
+          <p>Discover handpicked destinations tailored for your dream vacations.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box text-center p-3 border rounded shadow-sm h-100">
+          <img src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=800&q=80" class="img-fluid" alt="Virtual Tours">
+          <h4 class="mt-3">Virtual Tours</h4>
+          <p>Experience immersive previews before you pack your bags.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box text-center p-3 border rounded shadow-sm h-100">
+          <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=800&q=60" class="img-fluid" alt="Effortless Planning">
+          <h4 class="mt-3">Effortless Planning</h4>
+          <p>From wishlist to booking – plan trips easily with TravelGo tools.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonial-section text-white py-5 mt-5">
+    <div class="container text-center">
+      <h2 class="mb-4">What Our Travelers Say</h2>
+      <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+          <div class="carousel-item active" style="background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;">
+            <div class="d-flex flex-column align-items-center py-5" style="background-color: rgba(0,0,0,0.5);">
+              <img src="https://randomuser.me/api/portraits/men/75.jpg" class="rounded-circle mb-3" alt="Traveler 1">
+              <blockquote class="blockquote text-white">
+                <p>"TravelGo made my dream vacation a reality! Smooth booking and unforgettable memories."</p>
+              </blockquote>
+              <footer class="blockquote-footer text-white-50">Aarav Shah</footer>
+            </div>
+          </div>
+
+          <div class="carousel-item" style="background: url('https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;">
+            <div class="d-flex flex-column align-items-center py-5" style="background-color: rgba(0,0,0,0.5);">
+              <img src="https://randomuser.me/api/portraits/women/65.jpg" class="rounded-circle mb-3" alt="User 2">
+              <blockquote class="blockquote text-white">
+                <p>"Easy to use and packed with amazing destinations. Highly recommend for solo travelers."</p>
+              </blockquote>
+              <footer class="blockquote-footer text-white-50">Meera Nair</footer>
+            </div>
+          </div>
+
+          <div class="carousel-item" style="background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;">
+            <div class="d-flex flex-column align-items-center py-5" style="background-color: rgba(0,0,0,0.5);">
+              <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle mb-3" alt="User 3">
+              <blockquote class="blockquote text-white">
+                <p>"Great experience from start to finish. The TravelGo team is fantastic!"</p>
+              </blockquote>
+              <footer class="blockquote-footer text-white-50">Ravi Kumar</footer>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon bg-dark rounded-circle"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon bg-dark rounded-circle"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

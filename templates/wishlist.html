@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/exhibition.css') }}">
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom, #fef6f9, #f0f4f8); /* Soft pastel gradient */
+    color: #3D405B; /* Slate navy */
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.4);
+    z-index: -1;
+  }
+
+  .wishlist-container {
+    max-width: 1100px;
+    margin: 100px auto 60px;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    font-size: 2rem;
+    color: #6D597A; /* Dusty lavender */
+  }
+
+  .wishlist-row {
+    background: #FFF0F3; /* Light pink */
+    color: #4A4E69; /* Slate */
+    border-radius: 0.8rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 1.2rem;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    border: 1px solid #f8d4db;
+  }
+
+  .wishlist-row:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    background: #FFE8EC;
+  }
+
+  .wishlist-row h5 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #5D3A66;
+  }
+
+  .wishlist-row p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #555;
+  }
+
+  .wishlist-row .btn {
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 6px;
+    background-color: #DAD4EF;
+    color: #333;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .wishlist-row .btn:hover {
+    background-color: #C9B8E6;
+    color: #222;
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+  <div class="overlay"></div>
+
+  <div class="container wishlist-container">
+    <h2><i class="fas fa-heart me-2"></i>Your Wishlist</h2>
+    <div id="wishlist-items" class="row g-4 justify-content-center"></div>
+  </div>
+  
+{% endblock %}

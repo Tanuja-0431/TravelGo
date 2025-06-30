@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% block title %}User Dashboard - TravelGo{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<!-- HERO GREETING + SEARCH -->
+<section class="dashboard-hero">
+  <div class="container">
+    <h1>Welcome, {{ session.username or 'Traveler' }}!</h1>
+    <p>Find your next destination or revisit your favorites.</p>
+
+    <!-- SEARCH FILTER -->
+    <div class="search-box mt-4">
+     <form action="{{ url_for('search_places') }}" method="get">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <input type="text" name="location" class="form-control" placeholder="Search destination..." required>
+          </div>
+          <div class="col-md-4">
+            <select name="category" class="form-select">
+              <option value="">All Categories</option>
+              <option value="beach">Beaches</option>
+              <option value="mountain">Mountains</option>
+              <option value="city">Cities</option>
+              <option value="adventure">Adventure</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Search Now</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% if bookings %}
+<section class="container mt-5">
+  <h4 class="mb-4 fw-bold text-success"><i class="fas fa-ticket-alt me-2"></i>Your Bookings</h4>
+  {% for booking in bookings %}
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="booking-card p-4 border d-flex justify-content-between align-items-start flex-wrap">
+        <div>
+          <h5 class="fw-semibold mb-2">{{ booking.flight_number | default('N/A') }}</h5>
+          <p class="mb-1 text-muted">{{ booking.origin }} → {{ booking.destination }}</p>
+          <p class="mb-1"><strong>Passenger:</strong> {{ booking.passenger_name | default('N/A') }}</p>
+          <p class="text-info mb-0"><strong>Seat:</strong> {{ booking.seat }}</p>
+          <p class="mb-1 small text-secondary">🕒 {{ booking.departure_time }} - {{ booking.arrival_time }}</p>
+          <p class="mb-0 small text-success">💸 ₹{{ booking.price }}</p>
+        </div>
+        <form method="POST" action="{{ url_for('cancel_booking') }}">
+          <input type="hidden" name="flight_id" value="{{ booking.flight_id }}">
+          <input type="hidden" name="seat" value="{{ booking.seat }}">
+          <button type="submit" class="btn btn-outline-danger mt-2 mt-md-0">
+            Cancel Booking
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+{% if bus_bookings %}
+<section class="container mt-5">
+  <h4 class="mb-4 fw-bold text-primary">
+    <i class="fas fa-bus me-2"></i>Your Bus Bookings
+  </h4>
+
+  {% for bus in bus_bookings %}
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="booking-card p-4 border d-flex justify-content-between align-items-start flex-wrap">
+
+        <div>
+          <h5 class="fw-semibold mb-2">{{ bus.bus_number }}</h5>
+          <p class="mb-1 text-muted">{{ bus.origin }} → {{ bus.destination }}</p>
+
+          {% if bus.passenger_name %}
+          <p class="mb-1 small text-dark">
+            <strong>Passenger:</strong> {{ bus.passenger_name }}
+          </p>
+          {% endif %}
+
+          <p class="text-info mb-1">
+            <strong>Seat:</strong> {{ bus.seat }}
+          </p>
+
+          <p class="mb-1 small text-secondary">
+            🕒 
+           {{ bus.departure_time }} - {{ bus.arrival_time }}
+          </p>
+
+          <p class="mb-0 small text-success">
+            💸 ₹{{ bus.price }}
+          </p>
+        </div>
+
+        <form method="POST" action="{{ url_for('cancel_bus_booking') }}">
+          <input type="hidden" name="bus_id" value="{{ bus.bus_id }}">
+          <button type="submit" class="btn btn-outline-danger mt-2 mt-md-0">
+            Cancel Booking
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+{% if train_bookings %}
+<section class="container mt-5">
+  <h4 class="mb-4 fw-bold text-warning">
+    <i class="fas fa-train me-2"></i>Your Train Bookings
+  </h4>
+
+  {% for train in train_bookings %}
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="booking-card p-4 border d-flex justify-content-between align-items-start flex-wrap">
+        <div>
+          <h5 class="fw-semibold mb-2">{{ train.train_number }}</h5>
+          <p class="mb-1 text-muted">{{ train.origin }} → {{ train.destination }}</p>
+          <p class="text-info mb-1"><strong>Seat:</strong> {{ train.seat }}</p>
+          {% if train.passenger_name %}
+          <p class="mb-1"><strong>Passenger:</strong> {{ train.passenger_name }}</p>
+          {% endif %}
+          <p class="mb-1 small text-secondary">
+            🕒 {{ train.departure_time|datetimeformat }} - {{ train.arrival_time|datetimeformat }}
+          </p>
+          <p class="mb-0 small text-success">💸 ₹{{ train.price }}</p>
+        </div>
+        <form method="POST" action="{{ url_for('cancel_train_booking') }}">
+          <input type="hidden" name="train_id" value="{{ train.train_id }}">
+          <input type="hidden" name="seat" value="{{ train.seat }}">
+          <button type="submit" class="btn btn-outline-danger mt-2 mt-md-0">
+            Cancel Booking
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+{% if hotel_bookings %}
+<section class="container mt-5">
+  <h4 class="mb-4 fw-bold text-danger">
+    <i class="fas fa-hotel me-2"></i>Your Hotel Bookings
+  </h4>
+  {% for hotel in hotel_bookings %}
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="booking-card p-4 border d-flex justify-content-between align-items-start flex-wrap">
+        <div>
+          <h5 class="fw-semibold mb-2">{{ hotel.hotel_name }}</h5>
+          <p class="mb-1 text-muted">{{ hotel.location }}</p>
+          <p class="mb-1 small text-secondary">🛏️ {{ hotel.check_in }} - {{ hotel.check_out }}</p>
+          <p class="mb-0 small text-success">💸 ₹{{ hotel.price }}</p>
+        </div>
+        <form method="POST" action="{{ url_for('cancel_hotel_booking') }}">
+          <input type="hidden" name="hotel_id" value="{{ hotel.hotel_id }}">
+          <button type="submit" class="btn btn-outline-danger mt-2 mt-md-0">
+            Cancel Booking
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+{% if trip_plans %}
+  <h4 class="mt-5 mb-3 fw-bold text-primary">🗺️ Your Planned Trips</h4>
+  <div class="row g-4">
+    {% for trip in trip_plans %}
+    <div class="col-12">
+      <div class="card flex-row align-items-stretch h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+        
+        <!-- Image section (fixed width) -->
+        <div class="ratio ratio-4x3" style="width: 300px; flex-shrink: 0;">
+          <img src="{{ trip.image }}" class="img-fluid object-fit-cover" alt="{{ trip.place_name }}">
+        </div>
+
+        <!-- Content section -->
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ trip.place_name }}</h5>
+          <p class="text-muted mb-1">{{ trip.location }}</p>
+          <p class="mb-2"><strong>{{ trip.start_date }}</strong> → <strong>{{ trip.end_date }}</strong></p>
+          {% if trip.notes %}
+            <p class="small text-muted mb-3">📝 {{ trip.notes }}</p>
+          {% endif %}
+
+          {% if trip.status == 'finished' %}
+            <span class="badge bg-success mb-2"><i class="fas fa-check-circle me-1"></i>Finished</span>
+          {% endif %}
+
+          <div class="mt-auto d-flex justify-content-start gap-2">
+            <form action="{{ url_for('remove_trip_plan') }}" method="POST" onsubmit="return confirm('Remove this plan?');">
+              <input type="hidden" name="trip_id" value="{{ trip._id }}">
+              <button class="btn btn-sm btn-outline-danger" type="submit">
+                <i class="fas fa-trash-alt me-1"></i> Remove
+              </button>
+            </form>
+            <form action="{{ url_for('finish_trip_plan') }}" method="POST">
+              <input type="hidden" name="trip_id" value="{{ trip._id }}">
+              <button class="btn btn-sm btn-outline-success" type="submit">
+                <i class="fas fa-check me-1"></i> Finished
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-muted">You haven't planned any trips yet.</p>
+{% endif %}
+
+<!-- INFO CARDS SECTION -->
+<section class="container my-5">
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="info-box">
+        <img src="{{ url_for('static', filename='images/mytrips.jpg') }}" alt="My Trips">
+        <h5 class="mt-3">My Trips</h5>
+        <p>View and manage your past and upcoming travel bookings.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="info-box">
+        <img src="{{ url_for('static', filename='images/rio.jpg') }}" alt="Virtual Tours">
+        <h5 class="mt-3">Virtual Tours</h5>
+        <p>Explore places virtually before visiting them in person.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="info-box">
+        <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=800&q=80" alt="Wishlist">
+        <h5 class="mt-3">Wishlist</h5>
+        <p>Save destinations to your wishlist for later planning.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FACT SLIDESHOW SECTION -->
+<section class="mt-5">
+  <div id="factsCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+
+      <div class="carousel-item active">
+        <div class="fact-slide" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80');">
+          <h2>🌍 Did You Know?</h2>
+          <p class="lead">There are 195 countries in the world — how many have you visited?</p>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <div class="fact-slide" style="background-image: url('https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1600&q=80');">
+          <h2>✈️ Travel Trivia</h2>
+          <p class="lead">The Eiffel Tower can be 15 cm taller in the summer due to metal expansion.</p>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <div class="fact-slide" style="background-image: url('https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=1600&q=80');">
+          <h2>📸 Fun Fact</h2>
+          <p class="lead">The Great Wall of China is more than 13,000 miles long!</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Carousel controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#factsCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon bg-dark rounded-circle"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#factsCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon bg-dark rounded-circle"></span>
+    </button>
+  </div>
+</section>
+
+{% endblock %}

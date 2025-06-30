@@ -1,0 +1,43 @@
+.search-page .card::backdrop {
+  transform: scale(1.02);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  background-color: rgba(44, 125, 160, 0.1); /* subtle ocean tint */
+}
+
+.card-img-top {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.btn-visit {
+  background-color: #2C7DA0; /* Coastal Blue */
+  color: #F7FFF7;
+  border-radius: 50px;
+  padding: 0.4rem 1rem;
+  box-shadow: 0 2px 8px rgba(0, 51, 102, 0.2); /* Ocean shadow */
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-visit:hover {
+  background-color: #A8DADC; /* Light Aqua */
+  color: #1D3557; /* Deep Navy Text */
+  transform: scale(1.05);
+}
+
+.btn-back {
+  background-color: #F4A261; /* Sandy Orange */
+  color: #1D3557;
+  border: none;
+  font-weight: 600;
+}
+
+.btn-back:hover {
+  background-color: #457B9D; /* Calm ocean on hover */
+  color: #F7FFF7;
+}
+

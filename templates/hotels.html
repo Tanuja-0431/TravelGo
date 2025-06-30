@@ -1,0 +1,100 @@
+{% block content %}
+<div class="container py-5 mt-3">
+  <div class="bg-light shadow-sm rounded-4 p-4 mb-5 border">
+    <h4 class="mb-4 text-primary fw-bold">
+      <i class="fas fa-hotel me-2"></i>Search Hotels
+    </h4>
+    <form method="POST" action="{{ url_for('booking') }}" class="row g-3">
+      <input type="hidden" name="form_type" value="hotel">
+      <input type="hidden" name="active_tab" value="hotels">
+
+      <div class="col-md-4">
+        <label for="location" class="form-label">Location</label>
+        <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Goa" required>
+      </div>
+      <div class="col-md-4">
+        <label for="check_in" class="form-label">Check-in Date</label>
+        <input type="date" id="check_in" name="check_in" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label for="check_out" class="form-label">Check-out Date</label>
+        <input type="date" id="check_out" name="check_out" class="form-control" required>
+      </div>
+
+      <!-- Optional Filters -->
+      <div class="col-md-4">
+        <label for="min_price" class="form-label">Min Price</label>
+        <input type="number" name="min_price" id="min_price" class="form-control" placeholder="e.g. 1000">
+      </div>
+      <div class="col-md-4">
+        <label for="max_price" class="form-label">Max Price</label>
+        <input type="number" name="max_price" id="max_price" class="form-control" placeholder="e.g. 5000">
+      </div>
+      <div class="col-md-4">
+  <label for="room_type" class="form-label">Room Type</label>
+  <select name="room_type" id="room_type" class="form-select">
+    <option value="">Any</option>
+    <option value="standard">Standard</option>
+    <option value="deluxe">Deluxe</option>
+    <option value="suite">Suite</option>
+  </select>
+</div>
+
+      <div class="col-md-4">
+        <label for="min_rating" class="form-label">Minimum Rating</label>
+        <select name="min_rating" id="min_rating" class="form-select">
+          <option value="">Any</option>
+          <option value="1">1 ⭐</option>
+          <option value="2">2 ⭐</option>
+          <option value="3">3 ⭐</option>
+          <option value="4">4 ⭐</option>
+          <option value="5">5 ⭐</option>
+        </select>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary px-5">
+          <i class="fas fa-search me-2"></i>Search
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {% if hotels %}
+    <h5 class="text-secondary fw-semibold mb-4">
+      <i class="fas fa-list-ul me-2"></i>Available Hotels
+    </h5>
+    <div class="d-flex flex-column gap-4">
+      {% for hotel in hotels %}
+        <div class="card border shadow-sm">
+          <div class="card-body bg-white d-flex gap-4 flex-wrap align-items-center">
+            {% if hotel.image_url %}
+              <img src="{{ hotel.image_url }}" alt="{{ hotel.name }}" class="rounded-3" style="width: 150px; height: 100px; object-fit: cover;">
+            {% endif %}
+            <div class="flex-grow-1">
+              <h6 class="fw-bold mb-1">{{ hotel.name }}</h6>
+              <p class="mb-1 text-muted">{{ hotel.location }}</p>
+              <p class="mb-1 small text-secondary">
+                🛏 Rooms: {{ hotel.rooms }} | ⭐ {{ hotel.rating }}/5
+              </p>
+              <p class="mb-0 small text-success">
+                <i class="fas fa-rupee-sign me-1"></i>{{ hotel.price_per_night }} per night
+              </p>
+            </div>
+            <div>
+              <a href="{{ url_for('confirm_hotel_booking', hotel_id=hotel.id) }}" class="btn btn-outline-success px-4">
+                Book Now
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% elif hotels is defined %}
+    <div class="text-center text-muted mt-5">
+      <i class="fas fa-hotel-slash fa-2x mb-3"></i>
+      <p>No hotels match your search. Try different dates or location.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

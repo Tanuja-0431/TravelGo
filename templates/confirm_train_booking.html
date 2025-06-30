@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<div class="container py-5">
+  <div class="col-lg-8 mx-auto">
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-body p-5">
+        <h4 class="mb-4 text-warning fw-bold">
+          <i class="fas fa-train me-2"></i>Confirm Your Train Booking
+        </h4>
+
+        <!-- Train Info -->
+        <div class="bg-light rounded p-4 mb-4 border">
+          <h5 class="fw-semibold">{{ train.train_number }}</h5>
+          <p class="mb-1 text-muted">{{ train.origin }} → {{ train.destination }}</p>
+          <p class="mb-1 small text-secondary">
+            <i class="far fa-clock me-1"></i> Departure:
+            {{ train.departure_time.strftime('%d %b %Y, %I:%M %p') if train.departure_time is not string else train.departure_time }}
+          </p>
+          <p class="mb-1 small text-secondary">
+            <i class="far fa-clock me-1"></i> Arrival:
+            {{ train.arrival_time.strftime('%d %b %Y, %I:%M %p') if train.arrival_time is not string else train.arrival_time }}
+          </p>
+          <p class="mb-0 text-success fw-semibold">
+            <i class="fas fa-rupee-sign me-1"></i>{{ train.price }}
+          </p>
+        </div>
+
+        <!-- Seat Selection -->
+        <form method="POST">
+          <!-- Seat Legend -->
+          <div class="d-flex gap-4 align-items-center mb-3">
+            <span><span class="legend-box available me-1"></span> Available</span>
+            <span><span class="legend-box selected me-1"></span> Selected</span>
+            <span><span class="legend-box booked me-1"></span> Booked</span>
+          </div>
+
+          <h6 class="text-muted mb-3">Coach A</h6>
+
+          <!-- Seat Grid -->
+          <div id="seat-container" class="train-seat-grid mb-4"
+               data-max-seats="{{ num_passengers }}"
+               data-price="{{ train.price }}">
+            {% for row in range(1, 6) %}
+              <div class="train-seat-row">
+                {% for col in ['A', 'B', 'aisle', 'C', 'D'] %}
+                  {% if col == 'aisle' %}
+                    <div></div>
+                  {% else %}
+                    {% set seat_label = row ~ col %}
+                    <label class="train-seat {{ 'booked' if train.seats[seat_label] == 'booked' else 'available' }}">
+                      <input type="checkbox" name="seats[]" value="{{ seat_label }}"
+                        {% if train.seats[seat_label] == 'booked' %}disabled{% endif %}>
+                      <span class="seat-label">{{ seat_label }}</span>
+                    </label>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+
+          <!-- Warning -->
+          <div id="seat-warning" class="text-danger mt-2" style="display: none;"></div>
+
+          <!-- Passenger Inputs -->
+          <div id="passenger-details" class="mt-4" style="display: none;">
+            <h6 class="fw-semibold mb-3">Passenger Details</h6>
+            <div id="passenger-fields" class="d-flex flex-column gap-3"></div>
+          </div>
+
+          <!-- Total Price -->
+          <div id="total-price" class="fw-bold text-end text-success mt-3" style="display: none;"></div>
+
+          <div class="d-flex gap-3 justify-content-end mt-4">
+            <button type="submit" name="action" value="confirm" class="btn btn-success px-4">
+              <i class="fas fa-check me-2"></i>Confirm
+            </button>
+            <button type="submit" name="action" value="cancel" class="btn btn-outline-danger px-4">
+              <i class="fas fa-times me-2"></i>Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const seatContainer = document.getElementById('seat-container');
+    const maxSeats = parseInt(seatContainer.dataset.maxSeats);
+    console.log("Max Seats Allowed:", maxSeats);
+    const seatWarning = document.getElementById('seat-warning');
+    const passengerDetails = document.getElementById('passenger-details');
+    const passengerFields = document.getElementById('passenger-fields');
+    const totalPriceEl = document.getElementById('total-price');
+    const seatPrice = parseInt(seatContainer.dataset.price);
+    let selectedSeats = [];
+
+    seatContainer.addEventListener('change', function (e) {
+      if (e.target.type === 'checkbox') {
+        const seat = e.target.value;
+
+        if (e.target.checked) {
+          if (selectedSeats.length >= maxSeats) {
+            e.target.checked = false;
+            seatWarning.innerText = `You can only select up to ${maxSeats} seat(s).`;
+            seatWarning.style.display = 'block';
+          } else {
+            selectedSeats.push(seat);
+             e.target.closest('.train-seat').classList.add('selected'); 
+          }
+        } else {
+          selectedSeats = selectedSeats.filter(s => s !== seat);
+           e.target.closest('.train-seat').classList.remove('selected');
+          seatWarning.style.display = 'none';
+        }
+
+        // Update passenger fields dynamically
+        passengerFields.innerHTML = '';
+        for (let i = 0; i < selectedSeats.length; i++) {
+          passengerFields.innerHTML += `
+            <div class="row">
+              <div class="col-md-6">
+                <input type="text" class="form-control" name="passenger_names[]" placeholder="Passenger Name ${i + 1}" required>
+              </div>
+            </div>`;
+        }
+
+        if (selectedSeats.length > 0) {
+          passengerDetails.style.display = 'block';
+        } else {
+          passengerDetails.style.display = 'none';
+        }
+      }
+    });
+  });
+</script>
+
+
+<!-- Styles -->
+<style>
+  .train-seat-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .train-seat-row {
+    display: grid;
+    grid-template-columns: 60px 60px 30px 60px 60px;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .train-seat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    box-sizing: border-box;
+    transition: transform 0.2s;
+  }
+
+  .train-seat input {
+    display: none;
+  }
+
+  .train-seat.available { background-color: #28a745; }
+  .train-seat.booked { background-color: #999; cursor: not-allowed; color: #eee; }
+  .train-seat.selected {
+    background-color: #ffc107 !important;
+    color: #000;
+    outline: 3px solid #ffc107;
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.7);
+  }
+
+  .train-seat:hover:not(.booked) { transform: scale(1.05); }
+
+  .seat-label { pointer-events: none; }
+
+  .legend-box {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+  }
+
+  .legend-box.available { background-color: #28a745; }
+  .legend-box.selected { background-color: #ffc107; border: 2px solid #000; }
+  .legend-box.booked { background-color: #999; }
+</style>
+{% endblock %}
