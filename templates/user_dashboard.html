@@ -146,7 +146,7 @@
           <p class="mb-1"><strong>Passenger:</strong> {{ train.passenger_name }}</p>
           {% endif %}
           <p class="mb-1 small text-secondary">
-            🕒 {{ train.departure_time|datetimeformat }} - {{ train.arrival_time|datetimeformat }}
+            🕒 {{ train.departure_time }} - {{ train.arrival_time}}
           </p>
           <p class="mb-0 small text-success">💸 ₹{{ train.price }}</p>
         </div>
