@@ -15,8 +15,8 @@ app.secret_key = 'dev-secret-key-!23$TravelGo2025'
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 # Initialize AWS resources
-dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
-sns_client = boto3.client('sns', region_name='ap-south-1')
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+sns_client = boto3.client('sns', region_name='us-east-1')
 SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:586794467071:Travelgo:90e78453-f4b5-485a-85bd-dc379e38a683'  # Replace with your actual ARN
 
 # Define DynamoDB tables
@@ -926,4 +926,4 @@ def logout():
 
 # ---------------- RUN ----------------
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
